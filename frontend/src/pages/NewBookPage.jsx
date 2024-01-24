@@ -6,8 +6,8 @@ const NewBookPage = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [pages, setPages] = useState(0)
-
   const { fetchWithToken } = useContext(AuthContext)
+
   const navigate = useNavigate()
 
   const handleSubmit = async event => {

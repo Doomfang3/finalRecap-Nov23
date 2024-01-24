@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
+import { jwtDecode } from 'jwt-decode'
 
 export const AuthContext = createContext()
 
@@ -6,11 +7,14 @@ const AuthContextProvider = ({ children }) => {
   const [token, setToken] = useState()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [userId, setUserId] = useState()
 
   const saveToken = tokenFromLogin => {
     setToken(tokenFromLogin)
     setIsAuthenticated(true)
     window.localStorage.setItem('authToken', tokenFromLogin)
+    const { userId } = jwtDecode(tokenFromLogin)
+    setUserId(userId)
   }
 
   const verifyToken = async tokenFromLocalStorage => {
@@ -22,9 +26,11 @@ const AuthContextProvider = ({ children }) => {
         setIsAuthenticated(true)
         setToken(tokenFromLocalStorage)
         setIsLoading(false)
+        const { userId } = jwtDecode(tokenFromLocalStorage)
+        setUserId(userId)
       } else {
-        window.localStorage.removeItem('authToken')
         setIsLoading(false)
+        window.localStorage.removeItem('authToken')
       }
     } catch (error) {
       console.log(error)
@@ -46,6 +52,13 @@ const AuthContextProvider = ({ children }) => {
     }
   }
 
+  const logout = () => {
+    setToken()
+    window.localStorage.removeItem('authToken')
+    setIsAuthenticated(false)
+    setUserId()
+  }
+
   useEffect(() => {
     const tokenFromLocalStorage = window.localStorage.getItem('authToken')
     if (tokenFromLocalStorage) {
@@ -58,7 +71,9 @@ const AuthContextProvider = ({ children }) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ saveToken, isAuthenticated, isLoading, fetchWithToken }}>
+    <AuthContext.Provider
+      value={{ saveToken, isAuthenticated, isLoading, fetchWithToken, logout, userId }}
+    >
       {children}
     </AuthContext.Provider>
   )

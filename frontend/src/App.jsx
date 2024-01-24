@@ -16,9 +16,23 @@ function App() {
         <Route path='/' element={<BooksPage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/login' element={<LoginPage />} />
-        <Route path='/books/new' element={<NewBookPage />} />
+        <Route
+          path='/books/new'
+          element={
+            <PrivateRoute>
+              <NewBookPage />
+            </PrivateRoute>
+          }
+        />
         <Route path='/books/:bookId' element={<BookDetailsPage />} />
-        <Route path='/books/:bookId/update' element={<UpdateBookPage />} />
+        <Route
+          path='/books/:bookId/update'
+          element={
+            <PrivateRoute>
+              <UpdateBookPage />
+            </PrivateRoute>
+          }
+        />
 
         <Route path='*' element={<h1>404 Page not found</h1>} />
       </Routes>
