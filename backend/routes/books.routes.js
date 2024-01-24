@@ -4,10 +4,6 @@ const User = require('../models/User.model')
 
 const router = require('express').Router()
 
-router.get('/', (req, res) => {
-  res.json('All good in books')
-})
-
 // GET all
 router.get('/', async (req, res) => {
   try {
@@ -50,7 +46,7 @@ router.put('/:bookId', isAuthenticated, async (req, res) => {
   const { bookId } = req.params
   try {
     const bookToUpdate = await Book.findById(bookId)
-    if (bookToUpdate.createdBy === userId) {
+    if (bookToUpdate.createdBy == userId) {
       const updatedBook = await Book.findByIdAndUpdate(bookId, payload, { new: true })
       res.status(200).json(updatedBook)
     } else {
@@ -67,9 +63,11 @@ router.delete('/:bookId', isAuthenticated, async (req, res) => {
   const { bookId } = req.params
   try {
     const bookToDelete = await Book.findById(bookId)
-    if (bookToDelete.createdBy === userId) {
+    console.log(bookToDelete, userId)
+    if (bookToDelete.createdBy == userId) {
+      console.log('Deleting')
       await Book.findByIdAndDelete(bookId)
-      res.status(204)
+      res.status(204).json()
     } else {
       res.status(403).json({ message: 'you are not the right user' })
     }
